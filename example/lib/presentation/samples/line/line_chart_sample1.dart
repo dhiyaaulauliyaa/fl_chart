@@ -10,7 +10,7 @@ class _LineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LineChart(
-      isShowingMainData ? sampleData1 : sampleData2,
+      sampleData1,
       swapAnimationDuration: const Duration(milliseconds: 250),
     );
   }
@@ -23,7 +23,7 @@ class _LineChart extends StatelessWidget {
         lineBarsData: lineBarsData1,
         minX: 0,
         maxX: 14,
-        maxY: 4,
+        maxY: 3.5,
         minY: 0,
       );
 
@@ -50,21 +50,20 @@ class _LineChart extends StatelessWidget {
         bottomTitles: AxisTitles(
           sideTitles: bottomTitles,
         ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
+        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
+          sideTitles: topTitles,
         ),
         leftTitles: AxisTitles(
-          sideTitles: leftTitles(),
+          // sideTitles: leftTitles(),
+          sideTitles: SideTitles(showTitles: false),
         ),
       );
 
   List<LineChartBarData> get lineBarsData1 => [
         lineChartBarData1_1,
-        lineChartBarData1_2,
-        lineChartBarData1_3,
+        // lineChartBarData1_2,
+        // lineChartBarData1_3,
       ];
 
   LineTouchData get lineTouchData2 => LineTouchData(
@@ -128,21 +127,18 @@ class _LineChart extends StatelessWidget {
         reservedSize: 40,
       );
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
+  Widget topTitleWidgets(double value, TitleMeta meta) {
     Widget text;
     switch (value.toInt()) {
-      case 2:
-        text = const Text('SEPT', style: style);
-        break;
-      case 7:
-        text = const Text('OCT', style: style);
-        break;
-      case 12:
-        text = const Text('DEC', style: style);
+      case 14:
+        text = const Text(
+          'Highest: Nov 20 ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: AppColors.contentColorGreen,
+          ),
+        );
         break;
       default:
         text = const Text('');
@@ -152,9 +148,49 @@ class _LineChart extends StatelessWidget {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 10,
+      fitInside: SideTitleFitInsideData.fromTitleMeta(
+        meta,
+        distanceFromEdge: 6,
+      ),
       child: text,
     );
   }
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    Widget text;
+    switch (value.toInt()) {
+      case 0:
+        text = const Text(
+          'Lowest: Feb 20 ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: AppColors.contentColorRed,
+          ),
+        );
+        break;
+      default:
+        text = const Text('');
+        break;
+    }
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 10,
+      fitInside: SideTitleFitInsideData.fromTitleMeta(
+        meta,
+        distanceFromEdge: 6,
+      ),
+      child: text,
+    );
+  }
+
+  SideTitles get topTitles => SideTitles(
+        showTitles: true,
+        reservedSize: 32,
+        interval: 1,
+        getTitlesWidget: topTitleWidgets,
+      );
 
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
@@ -168,8 +204,10 @@ class _LineChart extends StatelessWidget {
   FlBorderData get borderData => FlBorderData(
         show: true,
         border: Border(
-          bottom:
-              BorderSide(color: AppColors.primary.withOpacity(0.2), width: 4),
+          bottom: BorderSide(
+            color: AppColors.primary.withOpacity(0.2),
+            width: 4,
+          ),
           left: const BorderSide(color: Colors.transparent),
           right: const BorderSide(color: Colors.transparent),
           top: const BorderSide(color: Colors.transparent),
@@ -178,19 +216,21 @@ class _LineChart extends StatelessWidget {
 
   LineChartBarData get lineChartBarData1_1 => LineChartBarData(
         isCurved: true,
-        color: AppColors.contentColorGreen,
-        barWidth: 8,
+        color: AppColors.contentColorBlue,
+        barWidth: 3,
         isStrokeCapRound: true,
         dotData: FlDotData(show: false),
         belowBarData: BarAreaData(show: false),
         spots: const [
-          FlSpot(1, 1),
-          FlSpot(3, 1.5),
+          FlSpot(0, 1),
+          FlSpot(1, 0.3),
+          FlSpot(3, 2),
           FlSpot(5, 1.4),
-          FlSpot(7, 3.4),
-          FlSpot(10, 2),
-          FlSpot(12, 2.2),
-          FlSpot(13, 1.8),
+          FlSpot(7, 2.8),
+          FlSpot(9, 1.2),
+          FlSpot(11, 2),
+          FlSpot(13, 3.4),
+          FlSpot(14, 2),
         ],
       );
 
@@ -305,53 +345,103 @@ class LineChartSample1State extends State<LineChartSample1> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.23,
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const SizedBox(
-                height: 37,
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+          const Center(
+            child: Text(
+              'Sample Stock Price',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
               ),
-              const Text(
-                'Monthly Sales',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 37,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16, left: 6),
-                  child: _LineChart(isShowingMainData: isShowingMainData),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
-              color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
             ),
-            onPressed: () {
-              setState(() {
-                isShowingMainData = !isShowingMainData;
-              });
-            },
-          )
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 250,
+            child: _LineChart(isShowingMainData: isShowingMainData),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            '     CHART SUMMARY',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Text(
+            '     Lowest Price: February 2020',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const Text(
+            '     Highest Price: November 2020',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ],
       ),
     );
+    // return AspectRatio(
+    //   aspectRatio: 1.23,
+    //   child: Stack(
+    //     children: <Widget>[
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.stretch,
+    //         children: <Widget>[
+    //           const SizedBox(
+    //             height: 37,
+    //           ),
+    //           const Text(
+    //             'Monthly Sales',
+    //             style: TextStyle(
+    //               color: AppColors.primary,
+    //               fontSize: 32,
+    //               fontWeight: FontWeight.bold,
+    //               letterSpacing: 2,
+    //             ),
+    //             textAlign: TextAlign.center,
+    //           ),
+    //           const SizedBox(
+    //             height: 37,
+    //           ),
+    //           Expanded(
+    //             child: Padding(
+    //               padding: const EdgeInsets.only(right: 16, left: 6),
+    //               child: _LineChart(isShowingMainData: isShowingMainData),
+    //             ),
+    //           ),
+    //           const SizedBox(
+    //             height: 10,
+    //           ),
+    //         ],
+    //       ),
+    //       IconButton(
+    //         icon: Icon(
+    //           Icons.refresh,
+    //           color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
+    //         ),
+    //         onPressed: () {
+    //           setState(() {
+    //             isShowingMainData = !isShowingMainData;
+    //           });
+    //         },
+    //       )
+    //     ],
+    //   ),
+    // );
   }
 }
